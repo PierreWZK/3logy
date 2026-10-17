@@ -74,16 +74,21 @@ cp .env.example .env      # puis renseigner RAWG_KEY et TMDB_TOKEN
 npx netlify dev           # site + fonctions sur http://localhost:8888
 ```
 
+Sans Netlify, `npm start` lance `server.mjs` (Node 20 ou plus, aucune dépendance) : site et relais sur http://localhost:3000, avec les clés lues dans les variables d'environnement (`RAWG_KEY=… TMDB_TOKEN=… npm start`).
+
 Les pages utilisent des modules JavaScript : il faut les servir, elles ne s'ouvrent pas directement depuis le fichier. Sans `netlify dev` (Live Server, `npx serve .`), le site marche en mode démo.
 
 ## Mise en ligne
 
 Netlify publie le dossier tel quel (`netlify.toml`) et déploie les fonctions de `netlify/functions/`. Il reste à définir `RAWG_KEY` et `TMDB_TOKEN` dans **Site configuration → Environment variables**.
 
+Sur un serveur (VPS avec Coolify, build pack Nixpacks) : `npm start` lance `server.mjs`, qui sert les pages et branche les deux mêmes fonctions sur `/api/rawg` et `/api/tmdb`. Port exposé : 3000. Définir `RAWG_KEY` et `TMDB_TOKEN` dans les variables d'environnement de l'application.
+
 ## Structure
 
 ```
 index.html, hub.html, defi.html, recherche.html
+server.mjs              Serveur Node hors Netlify (site + relais /api)
 css/style.css
 js/
 ├── common.js           Dates, tirage du jour, appels d'API, cache, échappement
