@@ -6,7 +6,7 @@
 
 3logy rassemble sur une page **un peu de code, un jeu et un film**, renouvelés chaque jour à minuit et les mêmes pour tout le monde. Un **défi du jour** alterne entre les trois thèmes, et une **recherche** couvre jeux, films, articles et astuces dev.
 
-🔗 **Démo :** [3logy.netlify.app](https://3logy.netlify.app/)
+🔗 **Démo :** [3logy.projectp.fr](https://3logy.projectp.fr/)
 
 ## Pages
 
