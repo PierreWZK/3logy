@@ -1,4 +1,4 @@
-// Trilogie · page vitrine : aperçu du programme du jour et rotation du défi
+// 3logy · page vitrine : aperçu du programme du jour et rotation du défi
 
 import { THEMES, esc, initLayout, longDate, showDemoNotice, themeOfDay, truncate } from './common.js';
 import { MAX_ATTEMPTS, currentStreak, loadGame } from './challenge-store.js';
@@ -28,7 +28,7 @@ $('today-dev-text').textContent = `${tip.topic} · ${truncate(tip.text, 110)}`;
 // ---------- Jeu et film du jour ----------
 
 gameOfDay().then(({ demo, game }) => {
-  if (demo) showDemoNotice();
+  showDemoNotice(demo);
   $('today-game-visual').innerHTML = visual(game.thumb, game.name, game.name);
   $('today-game-title').textContent = game.name;
   $('today-game-text').textContent = [game.year, game.genres.slice(0, 2).join(', '), game.metacritic && `Metacritic ${game.metacritic}`]
@@ -36,7 +36,7 @@ gameOfDay().then(({ demo, game }) => {
 });
 
 movieOfDay().then(({ demo, movie }) => {
-  if (demo) showDemoNotice();
+  showDemoNotice(demo);
   $('today-movie-visual').innerHTML = visual(movie.backdrop, movie.title, movie.title);
   $('today-movie-title').textContent = movie.title;
   $('today-movie-text').textContent = [movie.year, movie.director ?? movie.genres.slice(0, 2).join(', '), movie.vote && `★ ${movie.vote}`]

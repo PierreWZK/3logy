@@ -1,7 +1,13 @@
-// Trilogie · récupération des contenus du jour, avec repli sur les données de démo
+// 3logy · récupération des contenus du jour, avec repli sur les données de démo
 
-import { api, cachedDaily, dateKey, dayNumber, fetchJson, pickDaily, shuffleDaily, truncate } from './common.js';
+import { api, cachedDaily, dateKey, dayNumber, fetchJson, normalize, pickDaily, shuffleDaily, truncate } from './common.js';
 import { DEMO_GAMES, DEMO_MOVIES, DEV_TIPS } from './data.js';
+
+/**
+ * Pourquoi les données de démo remplacent l'API : « missing » (clé absente) ou « error ».
+ * `demo` vaut false quand les données en ligne sont bien là.
+ */
+const demoReason = (error) => (error.missingKey ? 'missing' : 'error');
 
 // ---------- Jeux (RAWG) ----------
 
@@ -20,6 +26,7 @@ function normalizeGame(g) {
     platforms: (g.parent_platforms ?? []).map((p) => p.platform.name),
     metacritic: g.metacritic ?? null,
     playtime: g.playtime || null,
+    added: g.added ?? 0, // nombre de joueurs qui l'ont dans leur bibliothèque RAWG : sa popularité
     screenshots: (g.short_screenshots ?? []).slice(1, 5).map((s) => rawgImage(s.image, 640)),
     url: `https://rawg.io/games/${g.slug}`,
   };
@@ -40,8 +47,8 @@ export async function gamePool() {
       });
       return { demo: false, games: data.results.filter((g) => g.background_image).map(normalizeGame) };
     });
-  } catch {
-    return { demo: true, games: DEMO_GAMES };
+  } catch (error) {
+    return { demo: demoReason(error), games: DEMO_GAMES };
   }
 }
 
@@ -50,7 +57,7 @@ export async function gameOfDay() {
   const pool = await gamePool();
   const game = pickDaily(pool.games, 'jeu');
   if (pool.demo) {
-    return { demo: true, game };
+    return { demo: pool.demo, game };
   }
 
   try {
@@ -109,8 +116,8 @@ export async function moviePool() {
       });
       return { demo: false, movies: data.results.filter((m) => m.poster_path && m.overview).map(normalizeMovie) };
     });
-  } catch {
-    return { demo: true, movies: DEMO_MOVIES };
+  } catch (error) {
+    return { demo: demoReason(error), movies: DEMO_MOVIES };
   }
 }
 
@@ -119,7 +126,7 @@ export async function movieOfDay() {
   const pool = await moviePool();
   const movie = pickDaily(pool.movies, 'cine');
   if (pool.demo) {
-    return { demo: true, movie };
+    return { demo: pool.demo, movie };
   }
 
   try {
@@ -212,4 +219,92 @@ export async function devDaily() {
 /** Quelques éléments du jour mélangés (réponses du défi). */
 export function dailyChoices(list, salt, count) {
   return shuffleDaily(list, salt).slice(0, count);
+}
+
+// ---------- Recherche ----------
+
+/** Tous les mots de la recherche sont présents dans au moins un des textes. */
+function matches(query, texts) {
+  const haystack = normalize(texts.filter(Boolean).join(' '));
+  return normalize(query).split(/\s+/).filter(Boolean).every((word) => haystack.includes(word));
+}
+
+/**
+ * Jeux (RAWG). En mode démo, la recherche se fait dans les jeux d'exemple.
+ * Renvoie { demo, items }.
+ */
+export async function searchGames(query, signal) {
+  try {
+    // La pertinence de RAWG remonte beaucoup de jeux amateurs, le tri par popularité ignore
+    // une partie des mots : on combine les deux listes.
+    const params = { search: query, search_precise: true, page_size: 20 };
+    const [relevant, popular] = await Promise.all([
+      api('rawg', 'games', params, { signal }),
+      api('rawg', 'games', { ...params, ordering: '-added' }, { signal }),
+    ]);
+
+    const games = new Map();
+    [...relevant.results, ...popular.results]
+      .filter((g) => g.background_image)
+      .forEach((g) => games.set(g.id, normalizeGame(g)));
+
+    // D'abord les jeux dont le nom contient tous les mots cherchés, puis les plus populaires
+    const items = [...games.values()]
+      .map((game) => ({ game, exact: matches(query, [game.name]) }))
+      .sort((a, b) => b.exact - a.exact || b.game.added - a.game.added)
+      .map(({ game }) => game)
+      .slice(0, 8);
+
+    return { demo: false, items };
+  } catch (error) {
+    if (!error.missingKey) throw error;
+    return { demo: 'missing', items: DEMO_GAMES.filter((g) => matches(query, [g.name, g.developer, ...g.genres])) };
+  }
+}
+
+/** Films (TMDB), fiches en français. */
+export async function searchMovies(query, signal) {
+  try {
+    const data = await api('tmdb', 'search/movie', { query, language: 'fr-FR', include_adult: false }, { signal });
+    return { demo: false, items: data.results.slice(0, 8).map(normalizeMovie) };
+  } catch (error) {
+    if (!error.missingKey) throw error;
+    return { demo: 'missing', items: DEMO_MOVIES.filter((m) => matches(query, [m.title, m.director, ...m.genres, ...m.cast])) };
+  }
+}
+
+/**
+ * Articles : recherche plein texte dans Hacker News, et articles DEV.to du tag
+ * correspondant quand la recherche tient en un mot (« react », « css »…).
+ */
+export async function searchArticles(query, signal) {
+  const hn = fetchJson(`https://hn.algolia.com/api/v1/search?query=${encodeURIComponent(query)}&tags=story&hitsPerPage=6`, { signal })
+    .then((data) => data.hits.filter((h) => h.title).map((h) => ({
+      source: 'Hacker News',
+      title: h.title,
+      url: h.url || `https://news.ycombinator.com/item?id=${h.objectID}`,
+      meta: `${h.points} points · ${new Date(h.created_at).getFullYear()}`,
+    })));
+
+  const tag = normalize(query).replace(/[^a-z0-9]/g, '');
+  const devto = /^\S+$/.test(query.trim()) && tag
+    ? fetchJson(`https://dev.to/api/articles?tag=${tag}&top=365&per_page=6`, { signal })
+      .then((articles) => articles.map((a) => ({
+        source: 'DEV.to',
+        title: a.title,
+        url: a.url,
+        meta: `${a.user?.name ?? 'DEV'} · ${a.reading_time_minutes} min · ♥ ${a.positive_reactions_count}`,
+      })))
+    : Promise.resolve([]);
+
+  const [devResults, hnResults] = await Promise.allSettled([devto, hn]);
+  if (devResults.status === 'rejected' && hnResults.status === 'rejected') {
+    throw hnResults.reason;
+  }
+  return [devResults, hnResults].flatMap((r) => (r.status === 'fulfilled' ? r.value : []));
+}
+
+/** Astuces dev : recherche locale, instantanée. */
+export function searchTips(query) {
+  return DEV_TIPS.filter((tip) => matches(query, [tip.topic, tip.title, tip.text, tip.code]));
 }

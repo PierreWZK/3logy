@@ -1,4 +1,4 @@
-// Trilogie · contenus locaux : astuces dev, quiz de code, et données de démo
+// 3logy · contenus locaux : astuces dev, quiz de code, et données de démo
 // (utilisées quand les clés RAWG / TMDB ne sont pas configurées)
 
 /** Astuces du jour de la colonne Dev Daily. */

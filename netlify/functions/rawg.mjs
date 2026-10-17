@@ -7,7 +7,8 @@ const ALLOWED = /^games(\/\d+)?$/;
 export default async (request) => {
   const key = process.env.RAWG_KEY;
   if (!key) {
-    return Response.json({ error: 'RAWG_KEY manquante' }, { status: 503 });
+    // « missing_key » : le site passe en mode démo
+    return Response.json({ error: 'RAWG_KEY manquante', reason: 'missing_key' }, { status: 503 });
   }
 
   const params = new URL(request.url).searchParams;

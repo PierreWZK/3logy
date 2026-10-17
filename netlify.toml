@@ -1,4 +1,4 @@
-# Trilogie : site statique + deux fonctions Netlify qui relaient RAWG et TMDB
+# 3logy : site statique + deux fonctions Netlify qui relaient RAWG et TMDB
 [build]
   publish = "."
   functions = "netlify/functions"

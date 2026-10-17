@@ -3,12 +3,13 @@
 // Appel : /api/tmdb?path=discover/movie&page=2  →  https://api.themoviedb.org/3/discover/movie?page=2
 
 // Seules les routes utilisées par le site sont autorisées
-const ALLOWED = /^(discover\/movie|movie\/\d+)$/;
+const ALLOWED = /^(discover\/movie|search\/movie|movie\/\d+)$/;
 
 export default async (request) => {
   const token = process.env.TMDB_TOKEN;
   if (!token) {
-    return Response.json({ error: 'TMDB_TOKEN manquant' }, { status: 503 });
+    // « missing_key » : le site passe en mode démo
+    return Response.json({ error: 'TMDB_TOKEN manquant', reason: 'missing_key' }, { status: 503 });
   }
 
   const params = new URL(request.url).searchParams;

@@ -1,4 +1,4 @@
-// Trilogie · outils partagés par les trois pages : dates, hasard du jour, appels d'API, cache
+// 3logy · outils partagés par les trois pages : dates, hasard du jour, appels d'API, cache
 
 // ---------- Dates ----------
 
@@ -88,9 +88,19 @@ export function themeOfDay(date = new Date()) {
  * RAWG et TMDB passent par les fonctions Netlify (/api/rawg, /api/tmdb), qui ajoutent
  * les clés côté serveur : elles n'apparaissent jamais dans le navigateur.
  */
-export async function api(service, path, params = {}) {
+export async function api(service, path, params = {}, { signal } = {}) {
   const query = new URLSearchParams({ path, ...params });
-  return fetchJson(`/api/${service}?${query}`);
+  const response = await fetch(`/api/${service}?${query}`, { signal });
+  if (response.ok) {
+    return response.json();
+  }
+
+  const body = await response.json().catch(() => ({}));
+  const error = new Error(`${service} : ${response.status}`);
+  // Clé absente, ou site servi sans les fonctions Netlify (404) : c'est le mode démo.
+  // Toute autre erreur vient de l'API elle-même (panne, quota…).
+  error.missingKey = body.reason === 'missing_key' || response.status === 404;
+  return Promise.reject(error);
 }
 
 export async function fetchJson(url, options) {
@@ -103,7 +113,7 @@ export async function fetchJson(url, options) {
 
 // ---------- Cache du jour ----------
 
-const CACHE_PREFIX = 'trilogie:cache:';
+const CACHE_PREFIX = '3logy:cache:';
 
 /**
  * Garde le résultat d'une requête jusqu'à minuit : les trois pages partagent les mêmes
@@ -163,6 +173,11 @@ export function esc(text) {
   }[c]));
 }
 
+/** Texte comparable : minuscules, sans accents (« Élden » → « elden »). */
+export function normalize(text) {
+  return String(text ?? '').normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+}
+
 /** Coupe un texte trop long à la fin d'un mot. */
 export function truncate(text, max) {
   if (!text || text.length <= max) {
@@ -171,12 +186,22 @@ export function truncate(text, max) {
   return `${text.slice(0, text.lastIndexOf(' ', max)).replace(/[,.;:]$/, '')}…`;
 }
 
-/** Affiche le bandeau « mode démo » quand une API n'a pas répondu. */
-export function showDemoNotice() {
+/**
+ * Bandeau affiché quand les exemples remplacent les données en ligne :
+ * « Mode démo » si les clés d'API ne sont pas configurées, sinon l'API n'a pas répondu.
+ */
+export function showDemoNotice(reason) {
   const notice = document.querySelector('[data-demo-notice]');
-  if (notice) {
-    notice.hidden = false;
+  if (!notice || !reason) {
+    return;
   }
+  // Une clé manquante l'emporte sur une panne passagère
+  if (notice.hidden || reason === 'missing') {
+    notice.innerHTML = reason === 'missing'
+      ? '<strong>Mode démo :</strong> les clés des API jeux et films ne sont pas configurées, des exemples sont affichés à la place.'
+      : '<strong>Données indisponibles :</strong> RAWG ou TMDB ne répond pas pour le moment, des exemples sont affichés à la place.';
+  }
+  notice.hidden = false;
 }
 
 /** Année en cours dans le pied de page, lien actif dans la navigation. */

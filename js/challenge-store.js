@@ -1,11 +1,11 @@
-// Trilogie · sauvegarde des défis dans le navigateur : partie du jour et statistiques
+// 3logy · sauvegarde des défis dans le navigateur : partie du jour et statistiques
 
 import { dateKey, storage } from './common.js';
 
 export const MAX_ATTEMPTS = 3;
 
-const gameKey = (date = new Date()) => `trilogie:defi:${dateKey(date)}`;
-const STATS_KEY = 'trilogie:stats';
+const gameKey = (date = new Date()) => `3logy:defi:${dateKey(date)}`;
+const STATS_KEY = '3logy:stats';
 
 /**
  * Partie du jour : { guesses: [id, …], solved, over }.

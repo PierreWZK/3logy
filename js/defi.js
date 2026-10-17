@@ -1,4 +1,4 @@
-// Trilogie · le défi du jour : un thème par jour (dev, jeu, ciné), 3 essais, un indice par erreur
+// 3logy · le défi du jour : un thème par jour (dev, jeu, ciné), 3 essais, un indice par erreur
 
 import { esc, initLayout, longDate, showDemoNotice, shuffleDaily, pickDaily, themeOfDay, untilMidnight } from './common.js';
 import { MAX_ATTEMPTS, currentStreak, loadGame, loadStats, recordResult, saveGame } from './challenge-store.js';
@@ -211,20 +211,37 @@ $('options').addEventListener('click', (event) => {
   }
 });
 
-/** Résultat façon Wordle : les cases de chaque essai, sans dévoiler la réponse. */
+/**
+ * Téléphone ou tablette : écran tactile sans survol. Windows et macOS proposent aussi
+ * navigator.share, mais sur ordinateur on préfère copier le lien.
+ */
+const isMobile = () => window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+
+/**
+ * Sur téléphone : feuille de partage du système, avec le résultat façon Wordle
+ * (les cases de chaque essai, sans dévoiler la réponse). Sur ordinateur : copie du lien.
+ */
 async function share() {
-  const squares = state.guesses.map((id) => (id === challenge.answer ? '🟩' : '🟥')).join('');
-  const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-  const text = `Trilogie · défi ${theme.label} ${theme.emoji} du ${date}\n${squares} ${state.solved ? `${state.guesses.length}/${MAX_ATTEMPTS}` : `X/${MAX_ATTEMPTS}`}\n${location.href}`;
   const button = $('share');
+  const url = `${location.origin}${location.pathname}`;
+
+  if (isMobile() && navigator.share) {
+    const squares = state.guesses.map((id) => (id === challenge.answer ? '🟩' : '🟥')).join('');
+    const date = new Date().toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
+    const score = state.solved ? `${state.guesses.length}/${MAX_ATTEMPTS}` : `X/${MAX_ATTEMPTS}`;
+    try {
+      await navigator.share({ text: `3logy · défi ${theme.label} ${theme.emoji} du ${date}\n${squares} ${score}`, url });
+      return;
+    } catch (error) {
+      // Feuille de partage fermée sans rien choisir : rien à signaler
+      if (error.name === 'AbortError') return;
+      // Autre échec : on se rabat sur la copie du lien
+    }
+  }
 
   try {
-    if (navigator.share) {
-      await navigator.share({ text });
-      return;
-    }
-    await navigator.clipboard.writeText(text);
-    button.textContent = 'Copié !';
+    await navigator.clipboard.writeText(url);
+    button.textContent = 'Lien copié !';
   } catch {
     button.textContent = 'Copie impossible';
   }
@@ -239,9 +256,7 @@ $('challenge-title').textContent = theme.title;
 $('challenge-sub').textContent = `${MAX_ATTEMPTS} essais. Chaque erreur débloque un indice${theme.key === 'dev' ? '' : ' et rend l\'image plus nette'}.`;
 
 challenge = await buildChallenge();
-if (challenge.demo) {
-  showDemoNotice();
-}
+showDemoNotice(challenge.demo);
 
 // Une partie sauvegardée avec une réponse qui n'existe plus (données changées) repart de zéro
 if (state.guesses.some((id) => !challenge.options.some((o) => o.id === id))) {

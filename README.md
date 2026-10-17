@@ -1,8 +1,8 @@
-# Trilogie · Le hub geek du jour
+# 3logy · Le hub geek du jour
 
 > Jour 04 du défi **30 jours, 30 projets** · HTML, CSS et JavaScript, API RAWG et TMDB, Netlify Functions
 
-Trilogie rassemble sur une page **un peu de code, un jeu et un film**, renouvelés chaque jour à minuit et les mêmes pour tout le monde. Un **défi du jour** alterne entre les trois thèmes.
+3logy rassemble sur une page **un peu de code, un jeu et un film**, renouvelés chaque jour à minuit et les mêmes pour tout le monde. Un **défi du jour** alterne entre les trois thèmes.
 
 ## Pages
 
@@ -11,6 +11,7 @@ Trilogie rassemble sur une page **un peu de code, un jeu et un film**, renouvel�
 | `index.html` | Vitrine : présentation, aperçu du programme du jour, rotation du défi |
 | `hub.html` | Le hub, en trois colonnes : Dev Daily, le jeu du jour, le film du jour |
 | `defi.html` | Le défi du jour |
+| `recherche.html` | Recherche de jeux, films, articles et astuces |
 
 ## Fonctionnalités
 
@@ -39,6 +40,15 @@ Trilogie rassemble sur une page **un peu de code, un jeu et un film**, renouvel�
 - **3 essais et 4 réponses**. Chaque erreur débloque un indice et rend l'image plus nette.
 - Le jeu et le film du hub sont exclus du défi, sinon ce serait trop facile.
 - **Statistiques et série 🔥** gardées dans le navigateur, **résultat à partager** façon Wordle (🟥🟩).
+
+**🔎 Recherche**
+
+- **Jeux** (RAWG) : les jeux dont le nom contient tous les mots cherchés passent en premier, triés par popularité. La recherche de RAWG seule remonte surtout des jeux amateurs.
+- **Films** (TMDB), avec les fiches en français.
+- **Articles** : recherche dans Hacker News, plus les articles DEV.to du tag quand la recherche tient en un mot (`react`, `css`…).
+- **Astuces dev** : recherche locale, insensible aux accents.
+- Filtres par catégorie, recherche pendant la frappe (les requêtes précédentes sont annulées), recherche dans l'adresse (`recherche.html?q=zelda`) pour partager un lien, raccourci `/`. Le hub a aussi son champ de recherche.
+- En mode démo, jeux et films sont cherchés dans les exemples.
 
 **Le même programme pour tout le monde** : les tirages utilisent un générateur pseudo-aléatoire initialisé par la date. Les réponses des API sont gardées en cache jusqu'à minuit (`localStorage`), donc chaque source n'est appelée qu'une fois par jour.
 
@@ -69,7 +79,7 @@ Netlify publie le dossier tel quel (`netlify.toml`) et déploie les fonctions de
 ## Structure
 
 ```
-index.html, hub.html, defi.html
+index.html, hub.html, defi.html, recherche.html
 css/style.css
 js/
 ├── common.js           Dates, tirage du jour, appels d'API, cache, échappement
@@ -78,7 +88,8 @@ js/
 ├── challenge-store.js  Partie du jour et statistiques (localStorage)
 ├── landing.js          Page vitrine
 ├── hub.js              Le hub
-└── defi.js             Le défi
+├── defi.js             Le défi
+└── search.js           La recherche
 netlify/functions/
 ├── rawg.mjs            Relais RAWG (clé RAWG_KEY)
 └── tmdb.mjs            Relais TMDB (jeton TMDB_TOKEN)

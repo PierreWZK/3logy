@@ -1,4 +1,4 @@
-// Trilogie · le hub : Dev Daily, jeu du jour, film du jour
+// 3logy · le hub : Dev Daily, jeu du jour, film du jour
 
 import { esc, initLayout, longDate, showDemoNotice, themeOfDay } from './common.js';
 import { MAX_ATTEMPTS, loadGame } from './challenge-store.js';
@@ -66,7 +66,7 @@ devDaily().then(({ repos, articles, news }) => {
 // ---------- Jeu du jour ----------
 
 gameOfDay().then(({ demo, game }) => {
-  if (demo) showDemoNotice();
+  showDemoNotice(demo);
 
   $('game').innerHTML = `
     <article class="panel">
@@ -97,7 +97,7 @@ gameOfDay().then(({ demo, game }) => {
 // ---------- Film du jour ----------
 
 movieOfDay().then(({ demo, movie }) => {
-  if (demo) showDemoNotice();
+  showDemoNotice(demo);
 
   $('movie').innerHTML = `
     <article class="panel">
