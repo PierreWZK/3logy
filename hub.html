@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Le hub du jour · Trilogie</title>
+  <meta name="description" content="Dev Daily, le jeu du jour et le film du jour, sur une seule page.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230c0d12'/%3E%3Crect x='7' y='15' width='5' height='10' rx='2.5' fill='%233ddc97'/%3E%3Crect x='13.5' y='7' width='5' height='18' rx='2.5' fill='%23a78bfa'/%3E%3Crect x='20' y='11' width='5' height='14' rx='2.5' fill='%23f5b544'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="hub">
+  <header class="nav container">
+    <a href="index.html" class="logo"><span class="logo-mark" aria-hidden="true"><i></i><i></i><i></i></span>Trilogie</a>
+    <nav class="nav-links" aria-label="Pages">
+      <a href="hub.html" data-nav="hub">Le hub</a>
+      <a href="defi.html" data-nav="defi">Le défi</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-head">
+      <div>
+        <h1>Le hub du <span id="hub-date"></span></h1>
+        <p>Renouvelé chaque jour à minuit, le même pour tout le monde.</p>
+      </div>
+    </div>
+
+    <p class="demo-notice" data-demo-notice hidden>
+      <strong>Mode démo :</strong> les API jeux et films ne sont pas configurées, des exemples sont affichés à la place.
+    </p>
+
+    <aside class="challenge-banner" id="challenge-banner">
+      <p id="challenge-banner-text"></p>
+      <a href="defi.html" class="btn btn-primary" id="challenge-banner-cta">Jouer →</a>
+    </aside>
+
+    <div class="columns">
+      <!-- Dev Daily -->
+      <section class="column theme-dev" id="dev" aria-labelledby="dev-title">
+        <div class="column-head">
+          <span class="emoji" aria-hidden="true">💻</span>
+          <h2 id="dev-title">Dev Daily</h2>
+        </div>
+
+        <article class="panel">
+          <div class="panel-body">
+            <p class="panel-title">Astuce du jour · <span id="tip-topic"></span></p>
+            <h3 id="tip-title"></h3>
+            <p id="tip-text"></p>
+            <pre class="code"><code id="tip-code"></code></pre>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-body">
+            <p class="panel-title">Dépôts GitHub qui montent cette semaine</p>
+            <div id="repos"><div class="skeleton" style="height: 160px"></div></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-body">
+            <p class="panel-title">À lire sur DEV.to</p>
+            <div id="articles"><div class="skeleton" style="height: 160px"></div></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-body">
+            <p class="panel-title">À la une de Hacker News</p>
+            <div id="news"><div class="skeleton" style="height: 160px"></div></div>
+          </div>
+        </article>
+      </section>
+
+      <!-- Jeu du jour -->
+      <section class="column theme-jeu" id="jeu" aria-labelledby="jeu-title">
+        <div class="column-head">
+          <span class="emoji" aria-hidden="true">🎮</span>
+          <h2 id="jeu-title">Le jeu du jour</h2>
+        </div>
+        <div id="game"><div class="skeleton" style="height: 520px"></div></div>
+      </section>
+
+      <!-- Film du jour -->
+      <section class="column theme-cine" id="cine" aria-labelledby="cine-title">
+        <div class="column-head">
+          <span class="emoji" aria-hidden="true">🎬</span>
+          <h2 id="cine-title">Le film du jour</h2>
+        </div>
+        <div id="movie"><div class="skeleton" style="height: 520px"></div></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer container">
+    <span>Trilogie · Jour 04 du défi 30 jours, 30 projets</span>
+    <span>
+      Données jeux : <a href="https://rawg.io/" target="_blank" rel="noopener">RAWG</a> ·
+      Films : <a href="https://www.themoviedb.org/" target="_blank" rel="noopener">TMDB</a>
+      (ce site utilise l'API TMDB sans être approuvé ni certifié par TMDB)
+    </span>
+  </footer>
+
+  <script type="module" src="js/hub.js"></script>
+</body>
+</html>
