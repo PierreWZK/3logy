@@ -1204,13 +1204,25 @@ code, pre {
 
 .footer {
   display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
-  padding-block: 28px;
+  padding-block: 24px;
   border-top: 1px solid var(--line);
   color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.footer-credits {
+  margin: 0;
+  text-align: center;
   font-size: 0.82rem;
+}
+
+.footer-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .footer a {
