@@ -58,7 +58,7 @@
 
 ## Clés d'API
 
-RAWG et TMDB demandent une clé. Elles ne sont **jamais envoyées au navigateur** : deux fonctions Netlify (`/api/rawg`, `/api/tmdb`) font les appels en ajoutant la clé côté serveur, et n'acceptent que les routes utilisées par le site.
+RAWG et TMDB demandent une clé. Elles ne sont **jamais envoyées au navigateur** : deux relais côté serveur (`/api/rawg`, `/api/tmdb`) font les appels en ajoutant la clé côté serveur, et n'acceptent que les routes utilisées par le site.
 
 | Variable | Où l'obtenir |
 | --- | --- |
@@ -70,25 +70,23 @@ RAWG et TMDB demandent une clé. Elles ne sont **jamais envoyées au navigateur*
 ## Lancer en local
 
 ```bash
-cp .env.example .env      # puis renseigner RAWG_KEY et TMDB_TOKEN
-npx netlify dev           # site + fonctions sur http://localhost:8888
+cp .env.example .env                 # puis renseigner RAWG_KEY et TMDB_TOKEN
+node --env-file=.env server.mjs      # site + relais sur http://localhost:3000
 ```
 
-Sans Netlify, `npm start` lance `server.mjs` (Node 20 ou plus, aucune dépendance) : site et relais sur http://localhost:3000, avec les clés lues dans les variables d'environnement (`RAWG_KEY=… TMDB_TOKEN=… npm start`).
+`server.mjs` (Node 20 ou plus, aucune dépendance) sert les pages et branche les relais sur `/api/rawg` et `/api/tmdb`. `npm start` fait la même chose avec les clés lues dans les variables d'environnement.
 
-Les pages utilisent des modules JavaScript : il faut les servir, elles ne s'ouvrent pas directement depuis le fichier. Sans `netlify dev` (Live Server, `npx serve .`), le site marche en mode démo.
+Les pages utilisent des modules JavaScript : il faut les servir, elles ne s'ouvrent pas directement depuis le fichier. Servies sans `server.mjs` (Live Server, `npx serve .`), elles marchent en mode démo.
 
 ## Mise en ligne
 
-Netlify publie le dossier tel quel (`netlify.toml`) et déploie les fonctions de `netlify/functions/`. Il reste à définir `RAWG_KEY` et `TMDB_TOKEN` dans **Site configuration → Environment variables**.
-
-Sur un serveur (VPS avec Coolify, build pack Nixpacks) : `npm start` lance `server.mjs`, qui sert les pages et branche les deux mêmes fonctions sur `/api/rawg` et `/api/tmdb`. Port exposé : 3000. Définir `RAWG_KEY` et `TMDB_TOKEN` dans les variables d'environnement de l'application.
+Hébergé sur Coolify (build pack Nixpacks) : `npm start` lance `server.mjs`, qui sert les pages et branche les deux mêmes fonctions sur `/api/rawg` et `/api/tmdb`. Port exposé : 3000. Définir `RAWG_KEY` et `TMDB_TOKEN` dans les variables d'environnement de l'application.
 
 ## Structure
 
 ```
 index.html, hub.html, defi.html, recherche.html
-server.mjs              Serveur Node hors Netlify (site + relais /api)
+server.mjs              Serveur Node (site + relais /api)
 css/style.css
 js/
 ├── common.js           Dates, tirage du jour, appels d'API, cache, échappement

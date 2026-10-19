@@ -1,8 +1,0 @@
-# 3logy : site statique + deux fonctions Netlify qui relaient RAWG et TMDB
-[build]
-  publish = "."
-  functions = "netlify/functions"
-
-# Clés à définir dans Netlify (Site configuration → Environment variables) :
-#   RAWG_KEY    clé de l'API RAWG (rawg.io/apidocs)
-#   TMDB_TOKEN  jeton d'accès en lecture de l'API TMDB (themoviedb.org → Paramètres → API)
