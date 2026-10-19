@@ -1,12 +1,14 @@
 # 3logy · Le hub geek du jour
 
-> Jour 04 du défi **30 jours, 30 projets** · HTML, CSS et JavaScript, API RAWG et TMDB, Netlify Functions
+> Jour 04 du défi **30 jours, 30 projets** · HTML, CSS et JavaScript, API RAWG et TMDB, serveur Node
 
 ![Page d'accueil de 3logy](docs/preview.png)
 
 3logy rassemble sur une page **un peu de code, un jeu et un film**, renouvelés chaque jour à minuit et les mêmes pour tout le monde. Un **défi du jour** alterne entre les trois thèmes, et une **recherche** couvre jeux, films, articles et astuces dev.
 
 🔗 **Démo :** [3logy.projectp.fr](https://3logy.projectp.fr/)
+
+📄 Ce qui a été construit, règle par règle : le [cahier des charges](CAHIER_DES_CHARGES.md).
 
 ## Pages
 

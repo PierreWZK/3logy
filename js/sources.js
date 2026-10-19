@@ -1,6 +1,6 @@
 // 3logy · récupération des contenus du jour, avec repli sur les données de démo
 
-import { api, cachedDaily, dateKey, dayNumber, fetchJson, normalize, pickDaily, shuffleDaily, truncate } from './common.js';
+import { api, cachedDaily, dateKey, dayNumber, fetchJson, normalize, pickDaily, truncate } from './common.js';
 import { DEMO_GAMES, DEMO_MOVIES, DEV_TIPS } from './data.js';
 
 /**
@@ -214,11 +214,6 @@ export async function devDaily() {
     news: value(news),
     repos: value(repos),
   };
-}
-
-/** Quelques éléments du jour mélangés (réponses du défi). */
-export function dailyChoices(list, salt, count) {
-  return shuffleDaily(list, salt).slice(0, count);
 }
 
 // ---------- Recherche ----------
