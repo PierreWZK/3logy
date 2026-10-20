@@ -13,14 +13,16 @@ const PORT = Number(process.env.PORT) || 3000;
 
 const API = { '/api/rawg': rawg, '/api/tmdb': tmdb };
 
-// Seuls les fichiers du site sont servis (jamais .env, netlify/, server.mjs…)
-const PUBLIC = /^\/(?:[\w-]+\.html|(?:css|js|docs)\/[\w.-]+)$/;
+// Seuls les fichiers du site sont servis (jamais .env, netlify/, server.mjs…), plus robots.txt et sitemap.xml
+const PUBLIC = /^\/(?:[\w-]+\.html|robots\.txt|sitemap\.xml|(?:css|js|docs)\/[\w.-]+)$/;
 
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.css': 'text/css; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
   '.png': 'image/png',
+  '.txt': 'text/plain; charset=utf-8',
+  '.xml': 'application/xml; charset=utf-8',
 };
 
 const server = createServer(async (req, res) => {

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://3logy.projectp.fr/sitemap.xml
