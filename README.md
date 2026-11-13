@@ -1,8 +1,14 @@
 # 3logy · Le hub geek du jour
 
-> Jour 04 du défi **30 jours, 30 projets** · HTML, CSS et JavaScript, API RAWG et TMDB, serveur Node
+🌐 **[3logy.projectp.fr](https://3logy.projectp.fr/)** · Jour 04 du défi **[30 jours, 30 projets](https://projectp.fr/)** · [Dépôt du défi](https://github.com/PierreWZK/30DaysProjects)
 
-![Page d'accueil de 3logy](docs/preview.png)
+Stack : HTML, CSS et JavaScript, API RAWG et TMDB, serveur Node.
+
+[![Page d'accueil de 3logy](docs/preview-accueil.png)](https://3logy.projectp.fr/)
+
+<p align="center">
+  <img src="docs/preview-mobile.png" alt="3logy sur téléphone" width="260">
+</p>
 
 3logy rassemble sur une page **un peu de code, un jeu et un film**, renouvelés chaque jour à minuit et les mêmes pour tout le monde. Un **défi du jour** alterne entre les trois thèmes, et une **recherche** couvre jeux, films, articles et astuces dev.
 
@@ -107,3 +113,14 @@ netlify/functions/
 ## Crédits
 
 Données jeux : [RAWG](https://rawg.io/). Films : [TMDB](https://www.themoviedb.org/). Ce site utilise l'API TMDB sans être approuvé ni certifié par TMDB.
+
+---
+
+## Le défi 30 jours, 30 projets
+
+Un projet complet par jour pendant 30 jours, chacun en ligne sur son propre sous-domaine.
+
+- 🗂️ **Tous les projets** : [projectp.fr](https://projectp.fr/)
+- 💻 **Le dépôt du défi** : [github.com/PierreWZK/30DaysProjects](https://github.com/PierreWZK/30DaysProjects)
+- ⬅️ **Jour précédent** : [RiverLog, suivi de bankroll poker](https://riverlog.projectp.fr/)
+- ➡️ **Jour suivant** : [Kairos, réservation de créneaux](https://kairos.projectp.fr/)
